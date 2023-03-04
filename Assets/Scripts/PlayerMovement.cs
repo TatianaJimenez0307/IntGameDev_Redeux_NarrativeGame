@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-//CSharp class name depending what you named it in unity
+///CSharp class name depending what you named it in unity
 public class PlayerMovement : MonoBehaviour
 {
 
     //VARIABLES GO HERE
 
+    Animator myAnim; //setting up animations
 
     //Tuning Game Vars
     public float speed = 2f;
@@ -19,6 +17,10 @@ public class PlayerMovement : MonoBehaviour
     bool haveKey = false; // collecting wands, it's a boolean variable
 
     public GameObject NPC1Text; //setting NPC1text var
+
+    public GameObject NPC2Text; //setting NPC2text var
+
+    public GameObject Player; //Setting uo player var
 
     // Vector3 is for x, y, z coordinates
     Vector3 thisPos;
@@ -28,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        myAnim = GetComponent<Animator> (); 
     }
 
     // Update is called once per frame
@@ -38,27 +40,37 @@ public class PlayerMovement : MonoBehaviour
         //storing current camera position as new Vector3 variable
         Vector3 newPos = transform.position;
 
-        //If Statements for ArrowKeys camera movement 
+        //camera follows player 
+        transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, transform.position.z);
+
+
+        //WASD MOVEMENT
         if (Input.GetKey(KeyCode.W))
         {
             //change y position by 1 AKA MOVE UP
             //delta time is the time in seconds btw the last and current frame. This standardizes movement, always use it w/ speed
             newPos.y += speed * Time.deltaTime;
+            myAnim.SetBool("isWalkingHorizontally", false); //stops horizontal animation
+            myAnim.SetBool("isWalkingVertically", true); //triggers animation 
         }
         if (Input.GetKey(KeyCode.S))
         {
             //change x position by -1 AKA MOVE LEFT 
             newPos.y -= speed * Time.deltaTime;
-        }
+
+            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation
+        } 
         if (Input.GetKey(KeyCode.A))
         {
             //change y position by -1 AKA MOVE DOWN 
             newPos.x -= speed * Time.deltaTime;
+            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation
         }
         if (Input.GetKey(KeyCode.D))
         {
             //change x position by 1 AKA MOVE RIGHT 
             newPos.x += speed * Time.deltaTime;
+            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation 
         }
 
         //set the players position to its new position, so its always updating
@@ -81,17 +93,27 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.name == "Key") //if we overlap with the wand, you collect it and the wand disapears
         {
-            haveKey = true; //collect wand
-            Destroy(other.gameObject); //wand disapears
+            haveKey = true; //collect key
+            Destroy(other.gameObject); //key disapears
         }
 
-        if (haveKey && other.gameObject.name == "NPC1") //if we overlap with chicken, our player dies
+        if (haveKey = true && other.gameObject.name == "Door") //if we have key and are colliding with door, door destroys
         {
-            Destroy(gameObject); //player disapears 
+
+            Destroy(other.gameObject); //door disapears
+        } 
+    
+      
+
+        //interacting with NPCS
+
+        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC1") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
+        {
+            NPC1Text.SetActive(true);  //textbox 1 appears
         }
-        else if (!haveKey && other.gameObject.name == "NPC1") //if player doesn't have wand, chicken says something
+        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC2") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
         {
-            NPC1Text.SetActive(true);
+            NPC2Text.SetActive(true); //textbox 2 appears
 
         }
 

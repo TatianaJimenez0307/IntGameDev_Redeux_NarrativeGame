@@ -55,22 +55,25 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.S))
         {
-            //change x position by -1 AKA MOVE LEFT 
+            //change x position by -1 AKA MOVE DOWN 
             newPos.y -= speed * Time.deltaTime;
 
-            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation
+            myAnim.SetBool("isWalkingVertically", true); //triggers animation
+            myAnim.SetBool("isWalkingHorizontally", false); //stops horizontal animation
         } 
         if (Input.GetKey(KeyCode.A))
         {
-            //change y position by -1 AKA MOVE DOWN 
+            //change y position by -1 AKA MOVE LEFT 
             newPos.x -= speed * Time.deltaTime;
             myAnim.SetBool("isWalkingHorizontally", true); //triggers animation
+            myAnim.SetBool("isWalkingVertically", false); //triggers animation
         }
         if (Input.GetKey(KeyCode.D))
         {
             //change x position by 1 AKA MOVE RIGHT 
             newPos.x += speed * Time.deltaTime;
-            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation 
+            myAnim.SetBool("isWalkingHorizontally", true); //triggers animation
+            myAnim.SetBool("isWalkingVertically", false); //triggers animation
         }
 
         //set the players position to its new position, so its always updating
@@ -80,10 +83,52 @@ public class PlayerMovement : MonoBehaviour
 
     //detects if we're colliding with another object. 
 
-    void OnCollisionEnter2D(Collision2D other) //void means empty. This function doesn't return a value
-    {
-        // Debug.Log(other.gameObject.name);
+   
 
+    void OnTriggerStay2D(Collider2D other) 
+    {
+
+        //interacting with NPCS
+
+        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC1") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
+        {
+            NPC1Text.SetActive(true);  //textbox 1 appears
+            Debug.Log("hi");
+        }
+        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC2") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
+        {
+            NPC2Text.SetActive(true); //textbox 2 appears
+
+        }
+    }
+
+    //making NPC textboxes dissapear
+
+    private void OnTriggerExit2D(Collider2D other) //if we stop overlapping with NPCs
+    {
+        if (other.gameObject.name == "NPC1")
+            
+        {
+            //hides textbox
+            NPC1Text.SetActive(false);
+            
+        }
+
+        if(other.gameObject.name == "NPC2")
+        {
+            //hides textbox
+            NPC2Text.SetActive(false);
+        }
+    }
+
+    //touching door 
+    private void OnCollisionEnter2D(Collision2D other) 
+    {
+        if (haveKey == true && other.gameObject.name == "Door") //if we have key and are colliding with door, door destroys
+        {
+
+            Destroy(other.gameObject); //door disapears
+        }
     }
 
     //detects if we're overlaping with another object
@@ -97,25 +142,13 @@ public class PlayerMovement : MonoBehaviour
             Destroy(other.gameObject); //key disapears
         }
 
-        if (haveKey = true && other.gameObject.name == "Door") //if we have key and are colliding with door, door destroys
-        {
-
-            Destroy(other.gameObject); //door disapears
-        } 
+       
     
       
 
-        //interacting with NPCS
+        
 
-        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC1") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
-        {
-            NPC1Text.SetActive(true);  //textbox 1 appears
-        }
-        if (Input.GetKey(KeyCode.Space) && other.gameObject.name == "NPC2") //if we overlap with NPC1, and press SPACE, NPC1 textbox shows up
-        {
-            NPC2Text.SetActive(true); //textbox 2 appears
-
-        }
+        
 
     }
 }
